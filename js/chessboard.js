@@ -1,20 +1,53 @@
 export default {
-	draw,
-	highlight
+  draw,
+  highlight,
 };
 
+var diagonals = [];
+var highlighted;
+var tileDiagonals = new Map();
 
 // ****************************
 
 function draw(boardEl) {
-	// TODO: draw the chessboard, 8 rows (divs)
-	// of 8 tiles (divs) each, inserting all DOM
-	// elements into `boardEl` div
+  //setting up my diagonals data structure
+  for (let i = 0; i < 30; i++) {
+    diagonals.push([]);
+  }
+
+  for (let i = 0; i < 8; i++) {
+    let rowEl = document.createElement("div");
+    for (let j = 0; j < 8; j++) {
+      let tileEl = document.createElement("div");
+      rowEl.appendChild(tileEl);
+
+      let majorDiag = diagonals[7 - (i - j)];
+      let minorDiag = diagonals[15 + (i + j)];
+
+      majorDiag.push(tileEl);
+      minorDiag.push(tileEl);
+
+      tileDiagonals.set(tileEl, [majorDiag, minorDiag]);
+    }
+    boardEl.appendChild(rowEl);
+  }
 }
 
 function highlight(tileEl) {
-	// TODO: clear previous highlights (if any) and
-	// then find the tiles in the two diagonals
-	// (major and minor) that `tileEl` belongs to,
-	// to highlight them via CSS class "highlighted"
+  //clear all currently highlighted tiles
+  for (let diagonal of highlighted) {
+    for (let el of diagonal) {
+      el.classList.remove("highlighted");
+    }
+  }
+
+  if (tileEl) {
+    highlighted = tileDiagonals.get(tileEl);
+
+    for (let diagonal of highlighted) {
+      for (let el of diagonal) {
+        el.classList.add("highlighted");
+      }
+    }
+  }
 }
